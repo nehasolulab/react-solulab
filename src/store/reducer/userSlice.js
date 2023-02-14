@@ -9,7 +9,9 @@ const usersSlice = createSlice({
   initialState,
   reducers: {
     addUser: (state, action) => {
-      state.push({ id: state.length + 1, user: action.payload });
+      // Generate a new unique ID for the user
+      const newId = state.length > 0 ? state[state.length - 1].id + 1 : 1;
+      state.push({ id: newId, user: action.payload });
       localStorage.setItem("users", JSON.stringify(state));
     },
 
@@ -20,12 +22,13 @@ const usersSlice = createSlice({
       state[userIndex].user = action.payload.user;
       localStorage.setItem("users", JSON.stringify(state));
     },
+
     deleteUser: (state, action) => {
-      state.splice(
-        state.findIndex((user) => user.id === action.payload),
-        1
-      );
-      localStorage.setItem("users", JSON.stringify(state));
+      const userIndex = state.findIndex((user) => user.id === action.payload);
+      if (userIndex !== -1) {
+        state.splice(userIndex, 1);
+        localStorage.setItem("users", JSON.stringify(state));
+      }
     },
   },
 });
